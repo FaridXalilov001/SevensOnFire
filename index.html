@@ -9,7 +9,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #121212; color: white; font-family: sans-serif; text-align: center; padding: 15px; }
 
-        /* Profil Bəlməsi */
         .profile-card {
             background: #1e1e1e;
             border-radius: 12px;
@@ -29,13 +28,11 @@
         .balance-box { background: #2a2a2a; padding: 8px 12px; border-radius: 8px; border: 1px solid #00ff88; }
         .balance-val { color: #00ff88; font-weight: bold; font-size: 16px; }
 
-        /* Menyu Düymələri */
         .action-btns { display: flex; gap: 10px; margin-bottom: 25px; }
         .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; }
         .btn-deposit { background: #28a745; }
         .btn-withdraw { background: #dc3545; }
 
-        /* Slot Maşını */
         .slot-machine { display: flex; justify-content: center; gap: 10px; margin: 25px 0; }
         .reel { width: 85px; height: 85px; background: #222; border: 2px solid #ff9900; border-radius: 12px; font-size: 42px; line-height: 85px; box-shadow: 0 0 10px rgba(255,153,0,0.3); }
         .btn-spin { background: #ff4500; color: white; border: none; padding: 16px; font-size: 20px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; }
@@ -43,7 +40,6 @@
 </head>
 <body>
 
-    <!-- Profil Menyusu -->
     <div class="profile-card">
         <div class="user-info">
             <div class="user-avatar" id="avatar">👤</div>
@@ -58,13 +54,11 @@
         </div>
     </div>
 
-    <!-- Depozit və Çıxarış Düymələri -->
     <div class="action-btns">
         <button class="btn btn-deposit" onclick="deposit()">➕ Depozit</button>
         <button class="btn btn-withdraw" onclick="withdraw()">➖ Çıxarış</button>
     </div>
 
-    <!-- Oyun Hissəsi -->
     <h2>🔥 Sevens on Fire 🔥</h2>
     <div class="slot-machine">
         <div class="reel" id="r1">🎰</div>
@@ -76,9 +70,8 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Ekranı tam açır
+        tg.expand();
 
-        // Telegram profil məlumatlarını çəkmək
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const user = tg.initDataUnsafe.user;
             document.getElementById('username').innerText = user.first_name || "Oyunçu";
@@ -115,7 +108,7 @@
         }
 
         function deposit() {
-            alert("Depozit sistemi tezliklə aktiv olacaq! (CryptoPay inteqrasiyası)");
+            alert("Depozit sistemi tezliklə aktiv olacaq!");
         }
 
         function withdraw() {
