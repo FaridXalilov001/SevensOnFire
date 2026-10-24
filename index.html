@@ -6,36 +6,98 @@
     <title>Sevens on Fire</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        .slot-machine { display: flex; justify-content: center; gap: 10px; margin: 30px 0; }
-        .reel { width: 80px; height: 80px; background: #222; border: 2px solid #gold; border-radius: 10px; font-size: 40px; line-height: 80px; }
-        button { background: #ff4500; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .balance { font-size: 20px; color: #00ff88; margin-bottom: 20px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #121212; color: white; font-family: sans-serif; text-align: center; padding: 15px; }
+
+        /* Profil Bəlməsi */
+        .profile-card {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 45px; height: 45px; border-radius: 50%; background: #ff4500; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+        .user-details { text-align: left; }
+        .user-name { font-weight: bold; font-size: 16px; }
+        .user-id { font-size: 12px; color: #aaa; }
+
+        .balance-box { background: #2a2a2a; padding: 8px 12px; border-radius: 8px; border: 1px solid #00ff88; }
+        .balance-val { color: #00ff88; font-weight: bold; font-size: 16px; }
+
+        /* Menyu Düymələri */
+        .action-btns { display: flex; gap: 10px; margin-bottom: 25px; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; }
+        .btn-deposit { background: #28a745; }
+        .btn-withdraw { background: #dc3545; }
+
+        /* Slot Maşını */
+        .slot-machine { display: flex; justify-content: center; gap: 10px; margin: 25px 0; }
+        .reel { width: 85px; height: 85px; background: #222; border: 2px solid #ff9900; border-radius: 12px; font-size: 42px; line-height: 85px; box-shadow: 0 0 10px rgba(255,153,0,0.3); }
+        .btn-spin { background: #ff4500; color: white; border: none; padding: 16px; font-size: 20px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
-    <h1>🔥 Sevens on Fire 🔥</h1>
-    <div class="balance">Balans: <span id="bal">100</span> $</div>
-    
-    <div class="slot-machine">
-        <div class="reel" id="r1">❓</div>
-        <div class="reel" id="r2">❓</div>
-        <div class="reel" id="r3">❓</div>
+
+    <!-- Profil Menyusu -->
+    <div class="profile-card">
+        <div class="user-info">
+            <div class="user-avatar" id="avatar">👤</div>
+            <div class="user-details">
+                <div class="user-name" id="username">Oyunçu</div>
+                <div class="user-id" id="userid">ID: ------</div>
+            </div>
+        </div>
+        <div class="balance-box">
+            <div>Balans:</div>
+            <div class="balance-val"><span id="bal">100.00</span> USDT</div>
+        </div>
     </div>
 
-    <button onclick="spin()">FIRLAT (10$)</button>
+    <!-- Depozit və Çıxarış Düymələri -->
+    <div class="action-btns">
+        <button class="btn btn-deposit" onclick="deposit()">➕ Depozit</button>
+        <button class="btn btn-withdraw" onclick="withdraw()">➖ Çıxarış</button>
+    </div>
+
+    <!-- Oyun Hissəsi -->
+    <h2>🔥 Sevens on Fire 🔥</h2>
+    <div class="slot-machine">
+        <div class="reel" id="r1">🎰</div>
+        <div class="reel" id="r2">7️⃣</div>
+        <div class="reel" id="r3">🎰</div>
+    </div>
+
+    <button class="btn-spin" onclick="spin()">FIRLAT (1.00 USDT)</button>
 
     <script>
-        let balance = 100;
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Ekranı tam açır
+
+        // Telegram profil məlumatlarını çəkmək
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const user = tg.initDataUnsafe.user;
+            document.getElementById('username').innerText = user.first_name || "Oyunçu";
+            document.getElementById('userid').innerText = "ID: " + user.id;
+            if(user.first_name) {
+                document.getElementById('avatar').innerText = user.first_name.charAt(0).toUpperCase();
+            }
+        }
+
+        let balance = 100.00;
         const items = ['🎰', '7️⃣', '🍒', '🍋', '💎'];
 
         function spin() {
-            if (balance < 10) {
-                alert("Balansınız çatmır!");
+            if (balance < 1) {
+                alert("Balansınız çatmır! Zəhmət olmasa depozit edin.");
                 return;
             }
-            balance -= 10;
-            document.getElementById('bal').innerText = balance;
+            balance -= 1;
+            document.getElementById('bal').innerText = balance.toFixed(2);
 
             let res1 = items[Math.floor(Math.random() * items.length)];
             let res2 = items[Math.floor(Math.random() * items.length)];
@@ -46,10 +108,18 @@
             document.getElementById('r3').innerText = res3;
 
             if (res1 === res2 && res2 === res3) {
-                balance += 100;
-                document.getElementById('bal').innerText = balance;
-                alert("TƏBRİKLƏR! 100$ qazandınız! 🎉");
+                balance += 20;
+                document.getElementById('bal').innerText = balance.toFixed(2);
+                alert("🎉 TƏBRİKLƏR! 20 USDT qazandınız!");
             }
+        }
+
+        function deposit() {
+            alert("Depozit sistemi tezliklə aktiv olacaq! (CryptoPay inteqrasiyası)");
+        }
+
+        function withdraw() {
+            alert("Çıxarış üçün minimum balans: 10 USDT");
         }
     </script>
 </body>
